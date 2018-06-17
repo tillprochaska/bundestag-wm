@@ -1,0 +1,15 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = false
+name = "pypi"
+
+[packages]
+requests = "*"
+"beautifulsoup4" = "*"
+python-dateutil = "*"
+pytz = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "*"
