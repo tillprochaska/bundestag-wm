@@ -10,7 +10,8 @@ def cleanStr(str):
     return str;
 
 weeks = [24, 26, 27];
-sessions = [];
+# final list of agenda items
+items = [];
 
 for week in weeks:
     r = requests.get('https://www.bundestag.de/apps/plenar/plenar/conferenceweekDetail.form?year=2018&limit=50&week=' + str(week));
@@ -26,6 +27,7 @@ for week in weeks:
         number = matches[4];
 
         tops = [];
+        sessionNumber = int(matches[4]);
 
         for top in day.select('tbody tr'):
             time = top.select('td:nth-of-type(1) p')[0].text.split(':');
@@ -46,9 +48,10 @@ for week in weeks:
                 desc = None;
                 link = None;
 
-            tops.append({
+            items.append({
                 'start': start.isoformat(),
-                'end': start.isoformat(),
+                'end': None,
+                'sessionNumber': sessionNumber,
                 'topic': topic,
                 'description': desc,
                 'link': link,
@@ -57,6 +60,12 @@ for week in weeks:
         for i in range(len(tops) - 1):
             if(i < len(tops)):
                 tops[i]['end'] = tops[i+1]['start'];
+        # Set end agenda item end datetime for convenience
+        for i in range(len(items) - 1):
+            if(i < len(items) and items[i]['sessionNumber'] == items[i+1]['sessionNumber']):
+                items[i]['end'] = items[i+1]['start'];
+            else:
+                items[i]['end'] = items[i]['start'];
 
         sessions.append({
             'date': date.isoformat(),
