@@ -10,10 +10,16 @@ URL = 'https://www.bundestag.de/apps/plenar/plenar/conferenceweekDetail.form?yea
 SESSION_WEEKS = [24, 26, 27];
 DEST = './data/debates.json';
 
-def cleanStr(str):
-    str = str.strip();
-    str = re.sub('\s+', ' ', str);
-    return str;
+def cleanContent(element):
+    # replace <br> tags with line breaks
+    for br in element.find_all('br'):
+        br.replace_with('\n');
+
+    text = element.text;
+    text = text.strip();
+    text = re.sub('\n\n+', '\n', text);
+    text = re.sub('[\r\t ]+', ' ', text);
+    return text;
 
 # final list of agenda items
 items = [];
@@ -35,6 +41,7 @@ for week in SESSION_WEEKS:
         sessionNumber = int(matches[4]);
 
         for top in day.select('tbody tr'):
+            organizationalTypes = ['Sitzungseröffnung', 'Sitzungsunterbrechung', 'Sitzungsende'];
             time = top.select('td:nth-of-type(1) p')[0].text.split(':');
             start = date.replace(hour = int(time[0]), minute = int(time[1]));
 
@@ -48,14 +55,18 @@ for week in SESSION_WEEKS:
                 else:
                     link = None;
 
-                topic = cleanStr(desc.select('.bt-top-collapser')[0].text);
-                desc = cleanStr(desc.select('.bt-top-collapse p')[0].text);
+                topic = cleanContent(desc.select('.bt-top-collapser')[0]);
+                desc = cleanContent(desc.select('.bt-top-collapse p')[0]);
+
+                if(desc == topic):
+                    desc = None;
             else:
-                topic = cleanStr(desc.text);
+                topic = cleanContent(desc);
                 desc = None;
                 link = None;
 
             items.append({
+                'type': 'organizational' if topic in organizationalTypes else None,
                 'start': start.isoformat(),
                 'end': None,
                 'sessionNumber': sessionNumber,
