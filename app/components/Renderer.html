@@ -1,0 +1,25 @@
+{ #each items as item }
+	{ #if typeof item === 'string' }
+		{ item }
+	{ :elseif item.type === 'linebreak' }
+		 
+	{ :elseif item.type === 'publications'}
+		<Publications publications="{ item.publications }" />
+	{ :elseif item.type === 'list' }
+		<List items="{ item.items }" />
+	{ /if }
+{ /each }
+
+<script>
+	import List from './Renderer/List.html';
+	import Linebreak from './Renderer/Linebreak.html';
+	import Publications from './Renderer/Publications.html';
+
+	export default {
+		components: {
+			List,
+			Linebreak,
+			Publications,
+		}
+	}
+</script>

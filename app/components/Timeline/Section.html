@@ -1,0 +1,177 @@
+<div class="section" style="height: { height }px">
+
+	<div class="scale" style="margin-top: { scaleOffset }px">
+		{ #each scaleIntervals as interval }
+			<div class="scale-item">
+				<span>{ interval === 0 ? 24 : interval }</span>
+			</div>
+		{ /each }
+	</div>
+
+	<div class="column">
+		<slot name="left"></slot>
+	</div>
+	<div class="column">
+		<slot name="right"></slot>
+	</div>
+
+</div>
+
+<style>
+	.section {
+		position: relative;
+		display: flex;
+		margin-top: 3rem;
+	}
+
+	.section .column {
+		position: relative;
+		flex-grow: 1;
+		transform: translateY(-.25rem);
+	}
+
+	.section .column {
+		order: 3;
+	}
+
+	.section .column:nth-of-type(2) {
+		order: 1;
+	}
+
+	.scale {
+		position: relative;
+		width: 2em;
+		transform: translateY(-.75rem);
+
+		flex-grow: 0;
+		flex-shrink: 0;
+		order: 2;
+
+		font-family: 'Fira Sans';
+		text-align: center;
+		font-weight: 400;
+		font-size: .75rem;
+		line-height: 1.5rem;
+		color: #999;
+	}
+
+	@media all and (min-width: 750px) {
+		.scale {
+			width: 75px;
+		}
+	}
+
+	.scale-item {
+		position: relative;
+		height: 100px;
+	}
+
+	.scale-item::before {
+		content: '';
+		position: absolute;
+		top: .75rem;
+		left: .33rem;
+		right: .33rem;
+		display: block;
+		border-bottom: 1px solid rgba(0, 0, 0, .1);
+	}
+
+	.scale-item span {
+		position: relative;
+		display: inline-block;
+		padding: 0 .33em;
+		background-color: rgba(245, 245, 248, 1);
+	}
+
+	.scale::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 50%;
+		height: 100%;
+		width: 2px;
+		margin-left: -1px;
+		/*background-color: rgba( 0, 0, 0, .1);*/
+	}
+</style>
+
+<script>
+	import Slot from './Slot.html';
+	import AgendaItem from '../AgendaItem.html';
+
+	// pixels per hour
+	const HEIGHT_PER_HOUR = 100;
+	const SCALE_INTERVAL = 1;
+
+	const normalizeTime = (dateString, fallback) => {
+		let date = dateString ? new Date(dateString) : fallback;
+		// we only need to compar start + end time
+		date.setYear(0);
+		date.setMonth(0);
+		date.setDate(1);
+		return date;
+	};
+
+	export default {
+
+		components: {
+			Slot,
+			AgendaItem,
+		},
+		
+		data() {
+			return {
+				start: null,
+				end: null,
+			};
+		},
+
+		computed: {
+
+			startDate: ({ start }) => new Date(start),
+			endDate: ({ end }) => new Date(end),
+
+			height: ({ startDate, endDate }) => {
+				// `getTime()` returns ms, convert to hours
+				let diffHours = (endDate.getTime() - startDate.getTime()) / 1000 / 60 / 60;
+				return diffHours * HEIGHT_PER_HOUR;
+			},
+
+			scale: ({ startDate, endDate }) => {
+				let startInterval = new Date(startDate);
+				startInterval.setMinutes(startInterval.getMinutes() + 59);
+				startInterval.setMinutes(0);
+
+				let endInterval = new Date(endDate);
+				endInterval.setMinutes(endInterval.getMinutes() - 60);
+				endInterval.setMinutes(0);
+				endInterval.setHours(endInterval.getHours() + 1);
+
+				let intervals = [];
+				let currentInterval = new Date(startInterval);
+
+				while(currentInterval <= endInterval) {
+					intervals.push(new Date(currentInterval).getHours());
+					currentInterval.setHours(currentInterval.getHours() + SCALE_INTERVAL);
+				}
+
+				return {
+					startInterval,
+					endInterval,
+					intervals
+				};
+			},
+
+			scaleIntervals: ({ scale }) => {
+				return scale.intervals;
+			},
+
+			scaleOffset: ({ scale, startDate }) => {
+				let diffHours = (scale.startInterval.getTime() - startDate.getTime()) / 1000 / 60 / 60;
+				return diffHours * HEIGHT_PER_HOUR;
+			},
+
+		},
+
+	}
+</script>

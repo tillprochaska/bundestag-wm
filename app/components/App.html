@@ -1,0 +1,92 @@
+<img class="hero-image" src="{ backgroundImage }" alt="Fotografie des Plenarsaals des Deutschen Bundestags" />
+<div class="wrapper">
+	<h1>Was entscheidet der Bundestag während der Fußball-WM?</h1>
+
+	<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.</p>
+
+	<p>Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus.</p>
+
+	<div class="timeline">
+		<Timeline />
+	</div>
+</div>
+
+<style>
+	.wrapper {
+		position: relative;
+		padding: 4.5rem .5rem;
+		padding-top: 33vh;
+		background-image: linear-gradient(to bottom, rgba(245, 245, 248, .5) 0, rgba(245, 245, 248, 1) 33vh);
+	}
+
+	@media screen and (orientation: landscape) {
+		.wrapper {
+			background-image: linear-gradient(to bottom, rgba(245, 245, 248, .5) 0, rgba(245, 245, 248, 1) 75vh);		
+		}
+	}
+
+	.hero-image {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+	}
+
+	.timeline {
+		max-width: 45rem;
+		margin: auto;
+		padding: 1.5rem 0;
+	}
+
+	h1 {
+		max-width: 35rem;
+		margin: auto;
+
+		font-family: 'Fira Sans';
+		font-weight: 600;
+	}
+
+	h1 {
+		font-size: 2rem;
+		line-height: 2.5rem;
+		margin-bottom: 1.5rem;
+		text-align: center;
+	}
+
+	@media screen and (min-width: 720px) {
+		h1 {
+			font-size: 2.5rem;
+			line-height: 2.75rem;
+		}
+	}
+
+	p {
+		max-width: 35rem;
+		margin: auto;
+		margin-bottom: 1.5rem;
+		font-family: 'Georgia';
+		text-align: justify;
+	}
+
+	img {
+		max-width: 100%;
+	} 
+
+</style>
+
+<script>
+	import Timeline from './Timeline.html';
+	import bundestag from '../bundestag.jpg';
+
+	export default {
+		components: {
+			Timeline,
+		},
+
+		data() {
+			return {
+				backgroundImage: bundestag
+			};
+		}
+	}
+</script>

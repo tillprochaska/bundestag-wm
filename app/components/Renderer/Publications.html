@@ -1,0 +1,27 @@
+<span class="publications">
+	{ #each Object.entries(publications) as [i, publication] }
+		{ #if publication.type === 'available' }
+			<a class="publication" href="{ publication.url }" target="_blank" title="Link zur Drucksache">{ publication.legislature }/{ publication.number }</a>
+		{ :else }
+			<span class="publication" title="Diese Drucksache ist zur Zeit nicht verfügbar">{ publication.legislature }/{ publication.number }</span>
+		{ /if }
+	{ /each }
+</span>
+
+<style>
+	.publications {
+		margin: 0 .125rem;
+	}
+
+	.publication {
+		margin: 0 .125rem;
+		padding: .125rem .25rem;
+		font-size: .65rem;
+		font-weight: 500;
+
+		text-decoration: none;
+		background: rgba(0, 0, 0, .05);
+		color: #444;
+		border-radius: 2px;
+	}
+</style>

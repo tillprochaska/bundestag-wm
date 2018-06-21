@@ -1,0 +1,133 @@
+{ #if groups !== null }
+	{ #each groups as group }
+		<Section start="{ group.start }" end="{ group.end }">
+			<div slot="left">
+				{ #each group.matches as match }
+
+				{ /each }
+			</div>
+			<div slot="right">
+				{ #each group.agendaItems as agendaItem }
+					<Slot
+						start="{ agendaItem.start }"
+						end="{ agendaItem.end }"
+						sectionStart="{ group.start }"
+					>
+						<AgendaItem { ...agendaItem } />
+					</Slot>
+				{ /each }
+			</div>
+		</Section>
+	{ /each }
+{ /if }
+
+<script>
+	import groupBy from 'lodash/groupBy';
+	import intersection from 'lodash/intersection';
+
+	import AgendaItem from './AgendaItem.html';
+	import Section from './Timeline/Section.html';
+	import Slot from './Timeline/Slot.html';
+
+	export default {
+
+		components: {
+			AgendaItem,
+			Section,
+			Slot,
+		},
+
+		data() {
+			return {
+				agendaItems: null,
+				matches: null,
+			};
+		},
+
+		oncreate() {
+			Promise.all(
+				['/data/matches.json', '/data/debates.json'].map(file => {
+					return fetch(file).then(response => {
+						return response.json();
+					});
+				})
+			).then(([matches, agendaItems]) => {
+				this.set({ matches, agendaItems });
+			});
+		},
+
+		computed: {
+
+			groupedAgendaItems: ({ agendaItems }) => {
+				if(!agendaItems) return null;
+
+				agendaItems = agendaItems.filter(item => {
+					// minor items take less than 20 minutes
+					let start = new Date(item.start);
+					let end   = new Date(item.end);
+					let durationInMinutes = (end.getTime() - start.getTime()) / 1000 / 60;
+					let isMinorItem = durationInMinutes <= 20;
+					return item.type !== 'organizational' && !isMinorItem;
+				});
+
+				let groups = groupBy(agendaItems, item => {
+					let date = new Date(item.start);
+					return date.toISOString().substr(0, 10);
+				});
+
+				return groups;
+			},
+
+			groupedMatches: ({ matches }) => {
+				if(!matches) return null;
+
+				let groups = groupBy(matches, item => {
+					let date = new Date(item.start);
+					return date.toISOString().substr(0, 10);
+				});
+
+				return groups;
+			},
+
+			groups: ({ groupedAgendaItems, groupedMatches }) => {
+				if(!(groupedAgendaItems && groupedMatches)) return null;
+
+				return intersection(
+					Object.keys(groupedAgendaItems),
+					Object.keys(groupedMatches)
+				).map(key => {
+					let startDates = [
+						...groupedAgendaItems[key].map(item => new Date(item.start)),
+						...groupedMatches[key].map(match => new Date(match.start))
+					].sort();
+
+					let endDates = [
+						...groupedAgendaItems[key].map(item => new Date(item.end)),
+						...groupedMatches[key].map(match => new Date(match.end))
+					].sort();
+
+					let earliest = startDates[0];
+					let latest = endDates[endDates.length - 1];
+
+					return {
+						start: earliest.setMinutes(earliest.getMinutes() - 30),
+						end: latest.setMinutes(latest.getMinutes() + 30),
+						agendaItems: groupedAgendaItems[key],
+						matches: groupedMatches[key],
+					};
+				});
+			},
+
+		}
+
+	}
+</script>
+
+<style>
+	h3 {
+		font-family: 'Work Sans';
+		font-size: 1rem;
+		font-weight: 600;
+		margin-top: 1.5rem;
+	}
+</style>

@@ -1,0 +1,132 @@
+<div class="agenda-item { type } { isActive ? 'is-active' : '' }" on:click="toggleActive(event)" >
+	<h3 class="topic">{ topic }</h3>
+	{ #if description }
+		<div class="content">
+			<Renderer items="{ format(description) }" />
+		</div>
+	{ /if }
+</div>
+
+<style>
+	.agenda-item {
+		position: absolute;
+		right: .25rem;
+		bottom: .25rem;
+		left: .25rem;
+		top: .25rem;
+
+		padding: .5rem;
+		hyphens: auto;
+		overflow: hidden;
+
+		font-size: .75rem;
+		line-height: 1rem;
+		background-color: #fff;
+		box-shadow: 1px 1px 2px rgba(0, 0, 0, .05);
+		font-family: 'Fira Sans';
+		cursor: pointer;
+
+		-webkit-tap-highlight-color: rgba(0,0,0,0);
+  		-webkit-tap-highlight-color: transparent;
+	}
+
+	.agenda-item + .agenda-item {
+		margin-top: .75rem;
+	}
+
+	.is-active {
+		right: -.25rem;
+		left: -.25rem;
+		top: -.25rem;
+		bottom: auto;
+		z-index: 10;
+
+		padding: 1rem;
+		box-shadow: 1px 1px 2px rgba(0, 0, 0, .05), 
+					0 0 25px rgba(0, 0, 0, .1),
+					0 0 250px 250px rgba(245, 245, 248, .75);
+		cursor: auto;
+	}
+
+	@media all and (max-width: 749px) {
+		.is-active {
+			width: calc(200% + 1rem);
+			margin-left: calc(-100% - 1rem);
+		}
+	}
+
+	.is-active::before {
+		content: '';
+		position: fixed;
+		top: 0;
+		left: -200%;
+		display: block;
+		width: 400%;
+		height: 100%;
+
+	}
+
+	.topic {
+		position: relative;
+		font-family: 'Fira Sans';
+		font-size: 1em;
+		font-weight: 500;
+	}
+
+	.is-active .topic {
+		font-weight: 500;
+	}
+
+	@media all and (max-width: 749px) {
+		.topic {
+			font-weight: 400;
+		}
+	}
+
+	.content {
+		position: relative;
+		margin-top: .5rem;
+		opacity: 0;
+	}
+
+	.is-active .content {
+		opacity: 1;
+	}
+</style>
+
+<script>
+	import createFormattingTree from '../helpers/createFormattingTree/index.js';
+	import Renderer from './Renderer.html';
+
+	export default {
+
+		components: {
+			Renderer
+		},
+
+		data() {
+			return {
+				isActive: false,
+				type: 'main',
+				topic: '',
+				description: '',
+			};
+		},
+
+		helpers: {
+			format(text) {
+				return createFormattingTree(text);
+			}
+		},
+
+		methods: {
+			toggleActive(event) {
+				event.stopPropagation();
+				this.set({
+					isActive: !this.get().isActive
+				});
+			}
+		},
+
+	}
+</script>

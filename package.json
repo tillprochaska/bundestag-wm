@@ -18,5 +18,8 @@
     "build": "rollup -c",
     "dev": "serve & rollup -c -w",
     "start": "serve"
+  },
+  "dependencies": {
+    "lodash": "^4.17.10"
   }
 }

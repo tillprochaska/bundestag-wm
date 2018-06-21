@@ -1,0 +1,49 @@
+<div
+	class="slot"
+	style="top: { top }px; height: { height }px"
+>
+	<slot />
+</div>
+
+<style>
+	.slot {
+		position: absolute;
+		width: 100%;
+		box-sizing: border-box;
+		padding: .25rem;
+	}
+</style>
+
+<script>
+	const HEIGHT_PER_HOUR = 100;
+
+	export default {
+
+		data() {
+			return {
+				start: null,
+				end: null,
+				sectionStart: null,
+			};
+		},
+
+		computed: {
+
+			startDate: ({ start }) => new Date(start),
+			endDate: ({ end }) => new Date(end),
+			sectionStartDate: ({ sectionStart }) => new Date(sectionStart),
+
+			height: ({ startDate, endDate }) => {
+				// `getTime()` returns ms, convert to hours
+				let diffHours = (endDate.getTime() - startDate.getTime()) / 1000 / 60 / 60;
+				return diffHours * HEIGHT_PER_HOUR;
+			},
+
+			top: ({ startDate, sectionStartDate }) => {
+				let diffHours = (startDate.getTime() - sectionStartDate.getTime()) / 1000 / 60 / 60;
+				return diffHours * HEIGHT_PER_HOUR;
+			},
+		},
+
+	}
+</script>

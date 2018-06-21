@@ -1,0 +1,29 @@
+<ul>
+	{ #each items as subtree }
+		<li><Renderer items="{ subtree.filter(item => item.type !== 'linebreak') }" /></li>
+	{ /each }
+</ul>
+
+<style>
+	* + ul {
+		margin-top: .75rem;
+	}
+
+	ul {
+		margin-left: 1.125em;
+	}
+
+	li + li {
+		margin-top: .5rem;
+	}
+</style>
+
+<script>
+	import Renderer from '../Renderer.html';
+
+	export default {
+		components: {
+			Renderer
+		}
+	}
+</script>
