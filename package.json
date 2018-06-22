@@ -17,7 +17,8 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "serve & rollup -c -w",
-    "start": "serve"
+    "start": "serve",
+    "deploy": "npm run build && surge --project ./ --domain bundestag-wm.surge.sh"
   },
   "dependencies": {
     "lodash": "^4.17.10"

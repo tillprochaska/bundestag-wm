@@ -8,7 +8,7 @@
 const BASE_URL = 'http://dipbt.bundestag.de/doc/btd';
 
 export default (raw, replace) => {
-	let pattern = /\n?\(?(?:Drucksachen? )?(\d{2}\/(?:\d{1,5}|…)(?:, \d{2}\/(?:\d{1,5}|…))*)\)?/gsm;
+	let pattern = /\n?\(?(?:Drucksachen? )?(\d{2}\/(?:\d{1,5}|…)(?:, \d{2}\/(?:\d{1,5}|…))*)\)?/gm;
 	return replace(raw, pattern, (match, items) => {
 		return {
 			type: 'publications',

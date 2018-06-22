@@ -1,8 +1,10 @@
 <div ref:container
 	class="agenda-item { type } { isActive ? 'is-active' : '' } { vote ? 'is-vote' : '' }"
-	on:click="toggleActive(event)"
+
 	on:focusin="handleFocus()"
 	on:focusout="handleFocus()"
+	on:mouseover="set({ isActive: true })"
+	on:mouseout="set({ isActive: false })"
 	on:keydown="handleKeydown(event)"
 	tabindex="0"
 >
@@ -70,7 +72,7 @@
 		right: 0;
 
 		display: block;
-		height: 1.5rem;
+		height: .75rem;
 		background-image: linear-gradient(to top, rgba(255, 255, 255, 1) 0, rgba(255, 255, 255, 0) 100%);
 	}
 
@@ -79,12 +81,12 @@
 		left: -.75rem;
 		top: -.75rem;
 		bottom: auto;
-		z-index: 10;
+		z-index: 5;
 
 		padding: 1rem;
 		box-shadow: 1px 1px 2px rgba(0, 0, 0, .05), 
 					0 0 25px rgba(0, 0, 0, .1),
-					0 0 250px 250px rgba(245, 245, 248, .75);
+					0 0 500px 500px rgba(245, 245, 248, .75);
 		cursor: auto;
 	}
 
@@ -93,17 +95,6 @@
 			width: calc(200% + 1rem);
 			margin-left: calc(-100% - .5rem);
 		}
-	}
-
-	.is-active::before {
-		content: '';
-		position: fixed;
-		top: 0;
-		left: -200%;
-		display: block;
-		width: 400%;
-		height: 100%;
-
 	}
 
 	.is-vote {

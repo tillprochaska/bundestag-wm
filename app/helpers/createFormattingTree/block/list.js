@@ -7,7 +7,7 @@
 import createFormattingTree from '../index.js';
 
 export default (raw, replace) => {
-	let pattern = /(?:^|\n)(–|[a-z]\)) (.*)(?:\n\1 .*)*/gsm;
+	let pattern = /(?:^|\n)(–|[a-z]\)) ([\s\S]*)(?:\n\1 [\s\S]*)*/gm;
 	return replace(raw, pattern, (match, type, items) => {
 		return {
 			type: 'list',
