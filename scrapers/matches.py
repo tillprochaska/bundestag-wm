@@ -54,7 +54,8 @@ for group in doc.select('.fi-matchlist .fi-mu-list'):
 
         matches.append({
             'type': matchType,
-            'date': date.isoformat(),
+            'start': date.isoformat(),
+            'end': (date + timedelta(minutes = 105)).isoformat(),
             'stadium': cleanStr(match.select('.fi__info__stadium')[0].text),
             'city': city,
 
