@@ -1,6 +1,9 @@
 <div ref:container
 	class="agenda-item { type } { isActive ? 'is-active' : '' } { vote ? 'is-vote' : '' }"
-	on:click="toggleActive(event)" on:focusin="handleFocus()" on:focusout="handleFocus()"
+	on:click="toggleActive(event)"
+	on:focusin="handleFocus()"
+	on:focusout="handleFocus()"
+	on:keydown="handleKeydown(event)"
 	tabindex="0"
 >
 	
@@ -190,14 +193,21 @@
 				window.setTimeout(() => {
 					let container = this.refs.container;
 					let activeElement = document.activeElement;
-					
+
 					if(activeElement && container.contains(activeElement)) {
 						this.set({ isActive: true });
 					} else {
 						this.set({ isActive: false });
 					}
-				}, 1);
+				}, 0);
 			},
+
+			handleKeydown(event) {
+				if(event.key === 'Escape') {
+					this.set({ isActive: false });
+				}
+			}
+
 		},
 
 	}
