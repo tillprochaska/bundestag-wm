@@ -3,7 +3,13 @@
 		<Section start="{ group.start }" end="{ group.end }">
 			<div slot="left">
 				{ #each group.matches as match }
-
+					<Slot
+						start="{ match.start }"
+						end="{ match.end }"
+						sectionStart="{ group.start }"
+					>
+						<Match { ...match } />
+					</Slot>
 				{ /each }
 			</div>
 			<div slot="right">
@@ -25,16 +31,18 @@
 	import groupBy from 'lodash/groupBy';
 	import intersection from 'lodash/intersection';
 
-	import AgendaItem from './AgendaItem.html';
 	import Section from './Timeline/Section.html';
 	import Slot from './Timeline/Slot.html';
+	import AgendaItem from './AgendaItem.html';
+	import Match from './Match.html';
 
 	export default {
 
 		components: {
-			AgendaItem,
 			Section,
 			Slot,
+			AgendaItem,
+			Match,
 		},
 
 		data() {

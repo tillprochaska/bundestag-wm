@@ -1,10 +1,30 @@
-<div class="agenda-item { type } { isActive ? 'is-active' : '' }" on:click="toggleActive(event)" >
+<div ref:container
+	class="agenda-item { type } { isActive ? 'is-active' : '' } { vote ? 'is-vote' : '' }"
+	on:click="toggleActive(event)" on:focusin="handleFocus()" on:focusout="handleFocus()"
+	tabindex="0"
+>
+	
 	<h3 class="topic">{ topic }</h3>
-	{ #if description }
-		<div class="content">
-			<Renderer items="{ format(description) }" />
-		</div>
+	{ #if vote }
+		<span class="meta">mit namentlicher Abstimmung</span>
 	{ /if }
+
+	{ #if vote }
+		<span class="vote" title="Namentliche Abstimmung"></span>
+	{ /if }
+
+	<div class="content">
+		{ #if description }
+			<Renderer items="{ format(description) }" /> <span class="meta">Quelle: Deutscher Bundestag</span>
+		{ /if }
+		{ #if link }
+			<div class="links"> 
+				<a class="more" target="_blank" href="https://www.bundestag.de{ link }">Weiter lesen auf bundestag.de</a>
+			</div>
+		{ /if }
+	</div>
+
+
 </div>
 
 <style>
@@ -14,15 +34,16 @@
 		bottom: .25rem;
 		left: .25rem;
 		top: .25rem;
-
-		padding: .5rem;
-		hyphens: auto;
 		overflow: hidden;
+
+		padding: .75rem;
+		hyphens: auto;
 
 		font-size: .75rem;
 		line-height: 1rem;
 		background-color: #fff;
-		box-shadow: 1px 1px 2px rgba(0, 0, 0, .05);
+		border-top: 3px solid rgb(197, 213, 224);
+		box-shadow: 1px 1px 2px rgba(0, 0, 0, .1);
 		font-family: 'Fira Sans';
 		cursor: pointer;
 
@@ -30,14 +51,30 @@
   		-webkit-tap-highlight-color: transparent;
 	}
 
+	.agenda-item:focus {
+		outline: none;
+	}
+
 	.agenda-item + .agenda-item {
 		margin-top: .75rem;
 	}
 
+	.agenda-item::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+
+		display: block;
+		height: 1.5rem;
+		background-image: linear-gradient(to top, rgba(255, 255, 255, 1) 0, rgba(255, 255, 255, 0) 100%);
+	}
+
 	.is-active {
-		right: -.25rem;
-		left: -.25rem;
-		top: -.25rem;
+		right: -.75rem;
+		left: -.75rem;
+		top: -.75rem;
 		bottom: auto;
 		z-index: 10;
 
@@ -51,7 +88,7 @@
 	@media all and (max-width: 749px) {
 		.is-active {
 			width: calc(200% + 1rem);
-			margin-left: calc(-100% - 1rem);
+			margin-left: calc(-100% - .5rem);
 		}
 	}
 
@@ -64,6 +101,10 @@
 		width: 400%;
 		height: 100%;
 
+	}
+
+	.is-vote {
+		border-top-color: #ff4b6c;
 	}
 
 	.topic {
@@ -83,14 +124,30 @@
 		}
 	}
 
+	.meta {
+		color: #888;
+	}
+
 	.content {
 		position: relative;
+		display: none;
 		margin-top: .5rem;
-		opacity: 0;
 	}
 
 	.is-active .content {
-		opacity: 1;
+		display: block;
+	}
+
+	.links {
+		margin-top: .5rem;
+	}
+
+	.more {
+		font-style: italic;
+		color: #000;
+		font-weight: 500;
+		text-decoration: none;
+		border-bottom: 1px solid rgb(197, 213, 224);
 	}
 </style>
 
@@ -110,6 +167,7 @@
 				type: 'main',
 				topic: '',
 				description: '',
+				vote: false,
 			};
 		},
 
@@ -120,12 +178,26 @@
 		},
 
 		methods: {
+
 			toggleActive(event) {
 				event.stopPropagation();
 				this.set({
 					isActive: !this.get().isActive
 				});
-			}
+			},
+
+			handleFocus() {
+				window.setTimeout(() => {
+					let container = this.refs.container;
+					let activeElement = document.activeElement;
+					
+					if(activeElement && container.contains(activeElement)) {
+						this.set({ isActive: true });
+					} else {
+						this.set({ isActive: false });
+					}
+				}, 1);
+			},
 		},
 
 	}
