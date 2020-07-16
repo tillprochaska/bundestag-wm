@@ -21,6 +21,6 @@
     "deploy": "npm run build && surge --project ./ --domain bundestag-wm.surge.sh"
   },
   "dependencies": {
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.19"
   }
 }
